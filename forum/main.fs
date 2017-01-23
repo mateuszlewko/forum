@@ -1,13 +1,16 @@
 open System
 open Forum.Server
-open Forum.Session
+open Forum.Connection
+open Forum
 
 [<EntryPoint>]
 let main args = 
+    let state = State.Create ()
+
     let disposable = 
         if args.Length >= 2
-        then Server.Start (handleConnection, args.[0], int args.[1])
-        else Server.Start (handleConnection)
+        then Server.Start (handleConnection state, args.[0], int args.[1])
+        else Server.Start (handleConnection state)
 
     let rec waitForKill () =
         if Console.ReadLine () <> "c" 
