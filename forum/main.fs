@@ -6,8 +6,8 @@ open Forum.Session
 let main args = 
     let disposable = 
         if args.Length >= 2
-        then Server.Start (startSession, args.[0], int args.[1])
-        else Server.Start (startSession)
+        then Server.Start (handleConnection, args.[0], int args.[1])
+        else Server.Start (handleConnection)
 
     let rec waitForKill () =
         if Console.ReadLine () <> "c" 

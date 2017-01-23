@@ -52,8 +52,9 @@
       <Paket>True</Paket>
     </Content>
     <Compile Include="server.fs" />
+    <Compile Include="state.fs" />
     <Compile Include="session.fs" />
-    <Compile Include="forum.fs" />
+    <Compile Include="main.fs" />
     <None Include="App.config" />
   </ItemGroup>
   <PropertyGroup>

@@ -11,23 +11,24 @@ module Server =
     open System.Text
 
     type Socket with
+    
         member socket.AsyncAccept() = 
             Async.FromBeginEnd(socket.BeginAccept, socket.EndAccept)
 
         member socket.AsyncReceive(buffer : byte[], ?offset, ?count) =
             let offset = defaultArg offset 0
             let count = defaultArg count buffer.Length
-            let beginReceive (b, o, c, cb, s) = socket.BeginReceive(b,o,c,SocketFlags.None,cb,s)
+            let beginReceive (b, o, c, cb, s) = socket.BeginReceive(b, o, c, SocketFlags.None, cb, s)
             Async.FromBeginEnd(buffer, offset, count, beginReceive, socket.EndReceive)
         
         member socket.AsyncSend(buffer : byte[], ?offset, ?count) =
             let offset = defaultArg offset 0
             let count = defaultArg count buffer.Length
-            let beginSend(b, o, c, cb, s) = socket.BeginSend(b,o,c,SocketFlags.None,cb,s)
+            let beginSend(b, o, c, cb, s) = socket.BeginSend(b, o, c, SocketFlags.None, cb, s)
             Async.FromBeginEnd(buffer, offset, count, beginSend, socket.EndSend)
 
         member socket.AsyncSend (text : string) =
-            socket.AsyncSend (Encoding.UTF8.GetBytes text)
+            Encoding.UTF8.GetBytes text |> socket.AsyncSend
 
         member socket.Receive ?maxSize =
             let data : byte array = 
@@ -36,6 +37,7 @@ module Server =
             Encoding.UTF8.GetString data
 
     type Server() =
+
         static member Start(handleConnection, hostname : string, ?port) =
             let ipAddress = Dns.GetHostEntry(hostname).AddressList.[0]
             Server.Start(handleConnection, ipAddress, ?port = port)
@@ -54,33 +56,19 @@ module Server =
             
             let rec acceptRequest () = async {
                 printfn "Waiting for request..."
-                let! socket = listener.AsyncAccept()
-            
+                let! socket = listener.AsyncAccept ()
                 printfn "Received request"
                 
-                // let response = "Hello World!" + string ind
-                // try
                 try
-                    // let session = async {
-                    //     let! bytesSent = socket.AsyncSend response
-                    //     // Console.WriteLine (socket.Receive ())
-                    //     printfn "Sent response"
-                    //     let s = Session socket
-                    //     s.Start ()
-                    // }
-
                     async { handleConnection socket } |> Async.Start
                 with e -> printfn "An error occurred: %s" e.Message
-                // finally
-                    // socket.Shutdown(SocketShutdown.Both)
-                    // socket.Close()
+
                 return! acceptRequest ()
             }
 
             Async.Start (acceptRequest (), cancellationToken = cts.Token)
             
-            { 
-                new IDisposable with 
+            { new IDisposable with 
                 member x.Dispose() = 
                     cts.Cancel()
                     listener.Close() 

@@ -12,7 +12,7 @@ let rec asyncSendInput (stream : NetworkStream) =
             |> Encoding.UTF8.GetBytes
 
         if stream.CanWrite then
-            input |> Array.iter stream.WriteByte
+            stream.Write(input, 0, input.Length)
             return! asyncSendInput stream
         else
             printfn "Can't write"
