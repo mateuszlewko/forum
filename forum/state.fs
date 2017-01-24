@@ -12,16 +12,19 @@ type Session = {
         user : User option
     } with 
 
-    static member Create () = { user = None }
+    static member empty = { user = None }
      
 
 type Post = Post of string
 
-type Thread = Thread of Post List
+type Thread = {
+        name  : string
+        posts : Post List
+    }
 
 type State = {
         mutable users   : Map<string, User>
-        mutable threads : Thread List
+        mutable threads : Map<string, Thread>
     }
     with 
 
@@ -29,9 +32,9 @@ type State = {
             raise <| NotImplementedException ()
 
             
-        static member Create () = {
+        static member Empty () = {
                 users   = Map.empty 
-                threads = List.empty
+                threads = Map.empty
             }
 
         member this.Store filePath = 

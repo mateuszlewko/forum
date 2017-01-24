@@ -30,10 +30,19 @@ module Server =
         member socket.AsyncSend (text : string) =
             Encoding.UTF8.GetBytes text |> socket.AsyncSend
 
+        member socket.Send (texts : string seq) =
+            texts
+            |> String.concat "\n" 
+            |> socket.AsyncSend 
+            |> Async.RunSynchronously 
+            |> ignore 
+
         member socket.Send (text : string) =
-             socket.AsyncSend text 
-             |> Async.RunSynchronously 
-             |> ignore 
+            printfn "sent: %s" text
+            
+            socket.AsyncSend text 
+            |> Async.RunSynchronously 
+            |> ignore 
 
         member socket.Receive ?maxSize =
             let data : byte array = 

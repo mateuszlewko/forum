@@ -5,7 +5,7 @@ open Forum
 
 [<EntryPoint>]
 let main args = 
-    let state = State.Create ()
+    let state = State.Empty ()
 
     let disposable = 
         if args.Length >= 2
