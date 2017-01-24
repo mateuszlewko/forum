@@ -52,6 +52,12 @@
     <Compile Include="forum-client.fs" />
     <None Include="App.config" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\forum\forum.fsproj">
+      <Project>{3BEB67C3-24CB-4178-A12E-DE6164BD21C1}</Project>
+      <Name>forum</Name>
+    </ProjectReference>
+  </ItemGroup>
   <PropertyGroup>
     <MinimumVisualStudioVersion Condition="'$(MinimumVisualStudioVersion)' == ''">14</MinimumVisualStudioVersion>
   </PropertyGroup>

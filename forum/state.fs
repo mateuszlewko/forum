@@ -2,6 +2,8 @@ namespace Forum
 
 open Microsoft.FSharp.Collections
 open System
+open System.IO
+open Newtonsoft.Json
 
 type User = {
         name : string
@@ -28,15 +30,19 @@ type State = {
     }
     with 
 
-        static member Load () = 
-            raise <| NotImplementedException ()
-
+        static member Load filePath =
+            try  
+                File.ReadAllText filePath
+                |> JsonConvert.DeserializeObject<State>
+            with 
+            | :? FileNotFoundException -> State.Empty ()
             
         static member Empty () = {
                 users   = Map.empty 
                 threads = Map.empty
             }
 
-        member this.Store filePath = 
-            raise <| NotImplementedException ()
+        member this.Save filePath = 
+            JsonConvert.SerializeObject this
+            |> curry File.WriteAllText filePath
 

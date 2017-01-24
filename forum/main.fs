@@ -5,11 +5,12 @@ open Forum
 
 [<EntryPoint>]
 let main args = 
-    let state = State.Empty ()
+    let filePath = args.[0]
+    let state = State.Load filePath
 
     let disposable = 
         if args.Length >= 2
-        then Server.Start (handleConnection state, args.[0], int args.[1])
+        then Server.Start (handleConnection state, args.[1], int args.[2])
         else Server.Start (handleConnection state)
 
     let rec waitForKill () =
@@ -17,6 +18,7 @@ let main args =
         then waitForKill ()
 
     waitForKill ()
+    state.Save filePath
 
     printfn "bye!"
     disposable.Dispose()
