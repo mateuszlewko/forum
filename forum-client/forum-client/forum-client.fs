@@ -23,7 +23,6 @@ let rec asyncPrintResponse (stream : NetworkStream) =
         if stream.CanRead then 
             let response = stream.ReadByte () |> Convert.ToChar
             Console.Write response
-            Thread.Sleep 2000
             return! asyncPrintResponse stream
         else
             printfn "Can't read"

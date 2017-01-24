@@ -39,7 +39,7 @@ module Server =
 
         member socket.Send (text : string) =
             printfn "sent: %s" text
-            
+
             socket.AsyncSend text 
             |> Async.RunSynchronously 
             |> ignore 
@@ -48,7 +48,13 @@ module Server =
             let data : byte array = 
                 Array.zeroCreate <| defaultArg maxSize 1024 * 64
             socket.Receive data |> ignore
-            Encoding.UTF8.GetString data
+            let s = 
+                data
+                |> Array.takeWhile ((<>) 0uy)
+                |> Encoding.UTF8.GetString 
+
+            printfn "got: %s" s
+            s
 
     type Server() =
 
