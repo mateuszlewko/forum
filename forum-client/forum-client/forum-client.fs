@@ -44,16 +44,28 @@ let parseAction (stream : NetworkStream) =
         write stream GET_THREADS
         write stream CommandEnd
     | "5" | "psts" ->
-        ()
+        write stream GET_POSTS
+        printf "thread index: "
+        sendLine stream
+        printf "max number of last posts: "
+        sendLine stream
+        write stream CommandEnd
     | "6" | "nthr" ->
         write stream ADD_THREAD
         printf "--- New threads ---\nTitle: "
         sendLine stream
         write stream CommandEnd
     | "7" | "npst" ->
-        ()
-    | "cmds" -> commandsInfo ()
-    | cmd -> printfn "Unknown command: %s" cmd
+        write stream ADD_POST
+        printf "thread index: "
+        sendLine stream
+        printfn "post:"
+        sendLine stream
+        write stream CommandEnd
+    | "0" | "cmds" -> commandsInfo ()
+    | cmd -> 
+        printfn "Unknown command: %s" cmd
+        commandsInfo ()
 
 
 let rec asyncSendInput (stream : NetworkStream) =
@@ -62,7 +74,6 @@ let rec asyncSendInput (stream : NetworkStream) =
             Console.ReadLine ()
             |> parseAction stream
 
-            // commandsInfo ()
             return! asyncSendInput stream
     }
 

@@ -18,7 +18,7 @@ let main args =
         then waitForKill ()
 
     waitForKill ()
-    state.Save filePath
+    state.Save ()
 
     printfn "bye!"
     disposable.Dispose()

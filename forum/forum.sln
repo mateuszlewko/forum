@@ -1,0 +1,23 @@
+
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
+Project("{f2a71f9b-5d33-465a-a702-920d77279786}") = "forum", "forum.fsproj", "{3BEB67C3-24CB-4178-A12E-DE6164BD21C1}"
+EndProject
+Project("{f2a71f9b-5d33-465a-a702-920d77279786}") = "forum-client", "..\forum-client\forum-client\forum-client.fsproj", "{1E342031-C779-4D42-812F-72BA36357631}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{3BEB67C3-24CB-4178-A12E-DE6164BD21C1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3BEB67C3-24CB-4178-A12E-DE6164BD21C1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3BEB67C3-24CB-4178-A12E-DE6164BD21C1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3BEB67C3-24CB-4178-A12E-DE6164BD21C1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1E342031-C779-4D42-812F-72BA36357631}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1E342031-C779-4D42-812F-72BA36357631}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1E342031-C779-4D42-812F-72BA36357631}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1E342031-C779-4D42-812F-72BA36357631}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal

@@ -12,8 +12,8 @@ type User = {
 
 type Session = {
         user : User option
-    } with 
-
+    } 
+    with 
     static member empty = { user = None }
      
 
@@ -27,22 +27,27 @@ type Thread = {
 type State = {
         mutable users   : Map<string, User>
         mutable threads : Map<string, Thread>
+        filePath        : string
     }
     with 
 
         static member Load filePath =
             try  
-                File.ReadAllText filePath
-                |> JsonConvert.DeserializeObject<State>
+                let s = 
+                    File.ReadAllText filePath
+                    |> JsonConvert.DeserializeObject<State>
+
+                { s with filePath = filePath }
             with 
             | :? FileNotFoundException -> State.Empty ()
             
         static member Empty () = {
-                users   = Map.empty 
-                threads = Map.empty
+                users    = Map.empty 
+                threads  = Map.empty
+                filePath = "store.txt"
             }
 
-        member this.Save filePath = 
+        member this.Save () = 
             JsonConvert.SerializeObject this
-            |> curry File.WriteAllText filePath
+            |> curry File.WriteAllText this.filePath
 

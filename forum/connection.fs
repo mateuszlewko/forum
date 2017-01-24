@@ -10,28 +10,32 @@ module Connection =
 
     /// Skips incoming messages until CommandEnd token appears 
     let rec skipToEnd (socket : Socket) =
-        if socket.Receive () <> Tokens.CommandEnd
+        if socket.Connected && socket.Receive () <> Tokens.CommandEnd
         then
-            printfn "skip" 
+            // printfn "skip" 
             skipToEnd socket
 
     let handleConnection (state : State) (socket : Socket) =
         let mutable session = Session.empty
-        let sss f = f session socket state
+        let sss (f, skip) = 
+            let s = f session socket state
+            skip socket
+            s
 
         let auth f = 
             match session.user with 
-            | Some user -> f
+            | Some user -> (f, skipToEnd)
             | None -> 
+                skipToEnd socket
                 socket.Send "Login first."
-                fun s _ _ -> s
+                ((fun s _ _ -> s), ignore)
 
         let rec handleRequest () = 
             session <- 
                 match socket.Receive () with
-                | LOGIN           -> sss loginUser 
-                | LOGOUT          -> sss logout
-                | REGISTER        -> sss registerUser
+                | LOGIN           -> sss (loginUser, skipToEnd)
+                | LOGOUT          -> sss (logout, skipToEnd)
+                | REGISTER        -> sss (registerUser, skipToEnd)
                 | ``ADD_THREAD``  -> sss <| auth addNewThread
                 | ``ADD_POST``    -> sss <| auth addNewPost
                 | ``GET_POSTS``   -> sss <| auth getPosts 
@@ -40,8 +44,9 @@ module Connection =
                 | cmd             -> 
                     printfn "Unknown command: %s" cmd
                     session 
-
-            skipToEnd socket
-            handleRequest ()
+                
+            state.Save ()
+            if socket.Connected 
+            then handleRequest ()
 
         handleRequest ()
