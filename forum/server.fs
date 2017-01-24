@@ -38,7 +38,7 @@ module Server =
             |> ignore 
 
         member socket.Send (text : string) =
-            printfn "sent: %s" text
+            // printfn "sent: %s" text
 
             socket.AsyncSend text 
             |> Async.RunSynchronously 
@@ -53,7 +53,7 @@ module Server =
                 |> Array.takeWhile ((<>) 0uy)
                 |> Encoding.UTF8.GetString 
 
-            printfn "got: %s" s
+            // printfn "got: %s" s
             s
 
     type Server() =

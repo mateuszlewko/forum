@@ -17,7 +17,7 @@ type Session = {
     static member empty = { user = None }
      
 
-type Post = Post of string
+type Post = Post of string * User
 
 type Thread = {
         name  : string

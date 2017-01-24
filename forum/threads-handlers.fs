@@ -22,25 +22,28 @@ module ThreadsHandlers =
         
         session
 
-    let addNewPost session (socket : Socket) (state : State) = 
-        try 
-            let threadIndex, post = int <| socket.Receive (), socket.Receive ()
-            let items = Map.toArray state.threads
-            
-            if  0 <= threadIndex && threadIndex < items.Length then
-                let thread = snd items.[threadIndex]
-                state.threads <-
-                    { thread with posts = (Post post)::thread.posts }
-                    |> curry state.threads.Add thread.name
+    let addNewPost (session : Session) (socket : Socket) (state : State) = 
+        match session.user with
+        | Some user ->
+            try 
+                let threadIndex, post = int <| socket.Receive (), socket.Receive ()
+                let items = Map.toArray state.threads
+                
+                if  0 <= threadIndex && threadIndex < items.Length then
+                    let thread = snd items.[threadIndex]
+                    state.threads <-
+                        { thread with posts = (Post (post, user))::thread.posts }
+                        |> curry state.threads.Add thread.name
 
-                socket.Send "Post added."
-            else
-                sprintf "Thread index out of bounds: %d" threadIndex
-                |> socket.Send 
-        
-        with 
-            | :? System.FormatException ->
-                socket.Send "Invalid thread number."
+                    socket.Send "Post added."
+                else
+                    sprintf "Thread index out of bounds: %d" threadIndex
+                    |> socket.Send 
+            
+            with 
+                | :? System.FormatException ->
+                    socket.Send "Invalid thread number."
+        | None -> ()
         session
 
     let getThreads session (socket : Socket) (state : State) = 
@@ -62,7 +65,7 @@ module ThreadsHandlers =
 
                 thread.posts
                 |> List.take (min num thread.posts.Length)
-                |> List.map (fun (Post p) -> p)
+                |> List.map (fun (Post (p, u)) -> sprintf "user: %s\npost: %s" u.name p)
                 |> socket.Send
             else
                 sprintf "Thread index out of bounds: %d" threadIndex

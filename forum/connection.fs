@@ -42,7 +42,8 @@ module Connection =
                 | ``GET_THREADS`` -> sss <| auth getThreads
                 // | CommandEnd      -> session
                 | cmd             -> 
-                    printfn "Unknown command: %s" cmd
+                    sprintf "Unknown command: %s\n" cmd
+                    |> socket.Send
                     session 
                 
             state.Save ()
